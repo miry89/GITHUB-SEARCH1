@@ -6,12 +6,14 @@ import { RowPerPageType } from '~/types/rowPerPage.type';
 const octokit = new Octokit({
   auth: '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'
 });
+
 class SearchStore {
   search = '';
   page = 0;
   rows: RowType[] = [];
   total = 0;
   rowsPerPage: RowPerPageType = 10;
+
   constructor() {
     makeObservable(this, {
       search: observable,
@@ -26,9 +28,11 @@ class SearchStore {
       setRowsPerPage: action
     });
   }
+
   get isEmpty(): boolean {
     return !this.search;
   }
+
   setSearch = (value = '') => {
     this.search = value;
   };
@@ -37,6 +41,7 @@ class SearchStore {
   };
   setPage = (value = 1) => {
     this.page = value;
+    void this.loadData();
   };
   setRows = (value: RowType[] = []) => {
     this.rows = value;
@@ -45,14 +50,29 @@ class SearchStore {
     this.rowsPerPage = value;
   };
   loadData = async () => {
-    const response = await octokit.request('GET /search/code', {
+    const { data } = await octokit.request('GET /search/code', {
       q: `q=${this.search}`,
       sort: 'indexed',
       order: 'desc',
       per_page: this.rowsPerPage,
       page: this.page
     });
-    console.log(JSON.stringify(response, null, 2));
+    const { items, total_count } = data;
+    const rows: RowType[] = items.map<RowType>(({ repository }) => {
+      const { id, owner, description = '', name: repo, languages_url } = repository;
+      return {
+        id,
+        owner: owner.login,
+        avatar: owner.avatar_url,
+        createAt: '?',
+        description,
+        updateAt: '?',
+        repo,
+        language: languages_url
+      };
+    });
+    this.setRows(rows);
+    this.setTotal(total_count);
   };
   onClickSearchAction = () => {
     void this.loadData();

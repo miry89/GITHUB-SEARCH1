@@ -23,22 +23,11 @@ const columns: readonly Column[] = [
   { id: 'repo', label: 'Repo Name', minWidth: 170 },
   { id: 'description', label: 'Description', minWidth: 170 },
   { id: 'avatar', label: 'Avatar', minWidth: 170 },
+  { id: 'language', label: 'Language', minWidth: 170 },
   { id: 'createAt', label: 'Create At', minWidth: 170 },
-  { id: 'updateAt', label: 'Update At', minWidth: 170 },
-  { id: 'language', label: 'Language', minWidth: 170 }
+  { id: 'updateAt', label: 'Update At', minWidth: 170 }
 ];
 
-/*const rows = [
-  {
-    owner: '1',
-    repo: '2',
-    description: '3',
-    avatar: '4',
-    createAt: '5',
-    updateAt: '6',
-    language: '7'
-  }
-];*/
 const ROWS_PER_PAGE_OPTIONS: RowPerPageType[] = [10, 25, 50, 100];
 
 const Pagination = observer(function () {
@@ -67,9 +56,9 @@ const Pagination = observer(function () {
 const TableDataBody = observer(function () {
   return (
     <TableBody>
-      {searchStr.rows.map((row) => {
+      {searchStr.rows.map((row, idx) => {
         return (
-          <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+          <TableRow hover role="checkbox" tabIndex={-1} key={`${row.id}_${idx}`}>
             {columns.map((column) => {
               const value = row[column.id];
               return (

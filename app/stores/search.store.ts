@@ -1,0 +1,62 @@
+import { Octokit } from '@octokit/core';
+import { action, makeObservable, observable } from 'mobx';
+import { RowType } from '~/types/row.type';
+import { RowPerPageType } from '~/types/rowPerPage.type';
+
+const octokit = new Octokit({
+  auth: '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'
+});
+class SearchStore {
+  search = '';
+  page = 0;
+  rows: RowType[] = [];
+  total = 0;
+  rowsPerPage: RowPerPageType = 10;
+  constructor() {
+    makeObservable(this, {
+      search: observable,
+      rows: observable,
+      page: observable,
+      total: observable,
+      rowsPerPage: observable,
+      setSearch: action,
+      setRows: action,
+      setTotal: action,
+      setPage: action,
+      setRowsPerPage: action
+    });
+  }
+  get isEmpty(): boolean {
+    return !this.search;
+  }
+  setSearch = (value = '') => {
+    this.search = value;
+  };
+  setTotal = (value = 0) => {
+    this.total = value;
+  };
+  setPage = (value = 1) => {
+    this.page = value;
+  };
+  setRows = (value: RowType[] = []) => {
+    this.rows = value;
+  };
+  setRowsPerPage = (value: RowPerPageType = 10) => {
+    this.rowsPerPage = value;
+  };
+  loadData = async () => {
+    const response = await octokit.request('GET /search/code', {
+      q: `q=${this.search}`,
+      sort: 'indexed',
+      order: 'desc',
+      per_page: this.rowsPerPage,
+      page: this.page
+    });
+    console.log(JSON.stringify(response, null, 2));
+  };
+  onClickSearchAction = () => {
+    void this.loadData();
+  };
+}
+
+export const searchStr = new SearchStore();

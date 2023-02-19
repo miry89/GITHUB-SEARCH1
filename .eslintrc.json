@@ -1,0 +1,21 @@
+{
+  "extends": ["next/core-web-vitals", "eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["prettier"],
+  "rules": {
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ],
+    "linebreak-style": ["error", "unix"],
+    "semi": ["error", "always"],
+    "react-hooks/exhaustive-deps": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": ["@mui/material", "@mui/material/utils", "@mui/styles", "@mui/base", "@mui/utils"]
+      }
+    ]
+  }
+}

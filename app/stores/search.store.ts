@@ -4,7 +4,7 @@ import { RowType } from '~/types/row.type';
 import { RowPerPageType } from '~/types/rowPerPage.type';
 
 const octokit = new Octokit({
-  auth: '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'
+  auth: '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'
 });
 
 class SearchStore {
